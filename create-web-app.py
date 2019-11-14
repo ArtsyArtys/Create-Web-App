@@ -1,5 +1,5 @@
 from __future__ import print_function, unicode_literals
-from writeFromFileToFile import create_public_files, create_server_files, create_frontend_files
+from writeFromFileToFile import create_public_files, create_server_files, create_frontend_files, create_package_json
 from sys import exit
 from PyInquirer import style_from_dict, Token, prompt#, Separator
 from connectdb import connectdb
@@ -29,6 +29,7 @@ style = style_from_dict({
 
 env = {}
 dependencies = []
+devDependencies = []
 appName = input('Input the name of your app: ') + r'/'
 
 def create_folders(env):
@@ -105,7 +106,7 @@ question = [
 server = prompt(question, style=style)['server']
 env['server'] = server
 if server == 'Express':
-    dependencies.append(r'"express": "^4.16.4",' + "\n" + r'"history": "^4.9.0",' + "\n")
+    dependencies.append(r'"express": "^4.16.4",' + "\n")
 
 create_server(env)
 
@@ -167,25 +168,28 @@ if database != 'None':
     dbpass = input("Input database owner password (hit enter if null): ")
     connectdb(database, dbname, dbuser, dbpass)
 
-#     {
-#         'type': 'checkbox',
-#         'message': 'Select Tools and Libraries',
-#         'name': 'database',
-#         'choices': [
-#             { 'name': 'Redux' },
-#             { 'name': 'React-Redux' },
-#             { 'name': 'Sequelize' },
-#             { 'name': 'Websocket -io'},
-#             { 'name': 'Webpack' },
-#             { 'name': 'Parcel' },
-#             { 'name': 'SQLAcademy' },
-#             { 'name': 'Doctrine 2' },
-#             { 'name': 'Google Oauth'},
-#             { 'name': 'TypeOrn'}
-#         ]
-#     },
-# ]
+question = [
+    {
+        'type': 'checkbox',
+        'message': 'Select Tools and Libraries',
+        'name': 'database',
+        'choices': [
+            { 'name': 'Redux' },
+            { 'name': 'React-Redux' },
+            { 'name': 'Sequelize' },
+            { 'name': 'TypeOrm'},
+            { 'name': 'Websocket -io'},
+            { 'name': 'Webpack' },
+            { 'name': 'Parcel' },
+            { 'name': 'SQLAcademy' },
+            { 'name': 'Doctrine 2' },
+            { 'name': 'Google Oauth'},
+        ]
+    },
+]
 
+tools = prompt(question, style=style)
+create_package_json(appName, dependencies, devDependencies)
 
 
 # answers = prompt(questions, style=style)
