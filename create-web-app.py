@@ -1,20 +1,9 @@
 from __future__ import print_function, unicode_literals
-from writeFromFileToFile import create_public_files, create_server_files, create_frontend_files, create_package_json
+from writeFromFileToFile import create_public_files, create_server_files, create_frontend_files, create_package_json, create_tools
 from sys import exit
 from PyInquirer import style_from_dict, Token, prompt#, Separator
 from connectdb import connectdb
 from os import makedirs
-
-# Used for prepending lines, check out f.seek and rstrip for line interloping
-
-def line_prepender(filepath, lineInput, lineNum = 0):
-    with open(filepath, 'r+') as f:
-        content = f.read()
-        f.seek(lineNum, 0)
-        f.write(lineInput.rstrip('\r\n') + '\n' + content)
-        f.close()
-
-
 
 style = style_from_dict({
     Token.Separator: '#cc5454',
@@ -43,12 +32,6 @@ def create_folders(env):
                 exit()
         create_public_files(appName)
 
-def create_server(env):
-    create_server_files(appName, env['server'].lower())
-
-def create_client(env):
-    create_frontend_files(appName, env['frontend'].lower())
-
 
 print(appName)
 question = [
@@ -59,7 +42,7 @@ question = [
         'choices': [
             { 'name': 'User FSA Stack', 'checked': True },
             { 'name': 'Node' },
-            { 'name': 'Python' },
+            { 'name': 'Python', 'disabled': True },
             { 'name': 'Elixir', 'disabled': True },
             { 'name': 'Go', 'disabled': True },
             { 'name': 'Deno (insecure)', 'disabled': True },
@@ -77,13 +60,13 @@ if runtime == 'User FSA Stack':
     env = {'frontend': 'React', 'server': 'Express'}
     create_folders(appName, env)
     exit()
-create_public_files(appName)
 
 backendChoices = []
 if runtime == 'Node':
     backendChoices.append({'name': 'Express', 'checked': True})
     backendChoices.append({'name': 'Fastify'})
     backendChoices.append({'name': 'Koa'})
+    dependencies.append(r'"compression": "^1.7.3",' + "\n")
 elif runtime == 'Python':
     backendChoices.append({ 'name': 'Django' })
     backendChoices.append({ 'name': 'Flask'})
@@ -94,7 +77,7 @@ backendChoices.append({'name': 'None'})
 print(backendChoices)
 
 
-question = [
+serverQuestion = [
     {
         'type': 'list',
         'message': 'Select Backend Server: ',
@@ -103,23 +86,23 @@ question = [
     },
 ]
 
-server = prompt(question, style=style)['server']
+server = prompt(serverQuestion, style=style)['server']
 env['server'] = server
 if server == 'Express':
     dependencies.append(r'"express": "^4.16.4",' + "\n")
+    devDependencies.append(r'"morgan": "^1.9.1",' + "\n")
 
-create_server(env)
 
-question = [
+frontendQuestion = [
     {
         'type': 'list',
         'message': 'Select Frontend Framework',
         'name': 'frontend',
         'choices': [
             { 'name': 'React' },
+            { 'name': 'Angular', 'disabled': True },
             { 'name': 'Ember', 'disabled': True },
             { 'name': 'Backbone', 'disabled': True },
-            { 'name': 'Angular', 'disabled': True },
             { 'name': 'Vue', 'disabled': True },
             { 'name': 'Meteor', 'disabled': True },
             { 'name': 'Mithril', 'disabled': True },
@@ -128,7 +111,7 @@ question = [
     }
 ]
 
-frontend = prompt(question, style=style)['frontend']
+frontend = prompt(frontendQuestion, style=style)['frontend']
 env['frontend'] = frontend
 
 if frontend == 'React':
@@ -139,16 +122,15 @@ if frontend == 'React':
         r'"react-router-dom": "^5.0.0",' + "\n"
     ]
     dependencies.extend(theseDependencies)
-    create_client(env)
 
-question = [
+databaseQuestion = [
     {
         'type': 'list',
         'message': 'Select Database',
         'name': 'database',
         'choices': [
-            { 'name': 'PostgreSQL' },
             { 'name': 'MySQL' },
+            { 'name': 'PostgreSQL' },
             { 'name': 'Oracle' },
             { 'name': 'MS SQL' },
             { 'name': 'MongoDB' },
@@ -160,27 +142,32 @@ question = [
     }
 ]
 
-database = prompt(question, style=style)['database']
-if database != 'None':
+database = prompt(databaseQuestion, style=style)['database']
+if database == 'PostgreSQL':
+    myDependencies = [
+        '"pg": "^7.9.0",' + "\n"
+        '"pg-hstore": "^2.3.2",' + "\n"
+    ]
+    dependencies.extend(myDependencies)
     print("Remember -- database name will always be lowercase with underscores only")
     dbname = input("Input desired name of db: ")
     dbuser = input("Input database owner username: ")
     dbpass = input("Input database owner password (hit enter if null): ")
     connectdb(database, dbname, dbuser, dbpass)
 
-question = [
+tolsQuestion = [
     {
         'type': 'checkbox',
-        'message': 'Select Tools and Libraries',
-        'name': 'database',
+        'message': r'Select Tools and Libraries (note parcel will be used if no bundler is picked)',
+        'name': 'tools',
         'choices': [
             { 'name': 'Redux' },
             { 'name': 'React-Redux' },
             { 'name': 'Sequelize' },
             { 'name': 'TypeOrm'},
             { 'name': 'Websocket -io'},
-            { 'name': 'Webpack' },
-            { 'name': 'Parcel' },
+            { 'name': 'Webpack', 'checked': True },
+            { 'name': 'Parcel'}, # default
             { 'name': 'SQLAcademy' },
             { 'name': 'Doctrine 2' },
             { 'name': 'Google Oauth'},
@@ -188,9 +175,49 @@ question = [
     },
 ]
 
-tools = prompt(question, style=style)
-create_package_json(appName, dependencies, devDependencies)
+tools = prompt(tolsQuestion, style=style)['tools']
+env['tools'] = tools
+isParcel = False if 'Webpack' in tools else True
+# print(tools)
+if 'Webpack' in tools:
+    dependencies.append(r'"webpack": "^4.16.4",' + "\n")
+    devDependencies.extend(['"@babel/core": "^7.4.3",' + "\n",
+        '"@babel/plugin-proposal-class-properties": "7.4.0",' + "\n",
+        '"@babel/plugin-proposal-decorators": "7.4.0",' + "\n",
+        '"@babel/plugin-proposal-export-namespace-from": "7.2.0",' + "\n",
+        '"@babel/plugin-proposal-function-sent": "7.2.0",' + "\n",
+        '"@babel/plugin-proposal-json-strings": "7.2.0",' + "\n",
+        '"@babel/plugin-proposal-numeric-separator": "7.2.0",' + "\n",
+        '"@babel/plugin-proposal-throw-expressions": "7.2.0",' + "\n",
+        '"@babel/plugin-syntax-dynamic-import": "7.2.0",' + "\n",
+        '"@babel/plugin-syntax-import-meta": "7.2.0",' + "\n",
+        '"@babel/polyfill": "^7.4.3",' + "\n",
+        '"@babel/preset-env": "^7.4.3",' + "\n",
+        '"@babel/preset-react": "^7.0.0",' + "\n",
+        '"@babel/register": "^7.4.0",' + "\n",
+        '"babel-eslint": "^10.0.1",' + "\n",
+        '"babel-loader": "^8.0.5",' + "\n",
+        '"webpack-cli": "^3.1.0",' + "\n",
+        '"webpack": "^4.16.4",' + "\n"
+    ])
+else:
+    dependencies.append(r'"parcelmon": "0.0.9",' + "\n")
+    myDevDependencies = [
+        '"babel-core": "^6.26.3",' + "\n",
+        '"babel-preset-env": "^1.7.0",' + "\n",
+        '"babel-preset-react": "^6.24.1",' + "\n",
+        '"parcel-bundler": "^1.12.4",' + "\n"
+    ]
+    devDependencies.extend(myDevDependencies)
 
-
-# answers = prompt(questions, style=style)
-# print(answers)
+dependencies[-1] = dependencies[-1][0:-2]
+devDependencies[-1] = devDependencies[-1][0:-2]
+env["dependencies"] = dependencies
+env["devDependencies"] = devDependencies
+env["isParcel"] = isParcel
+print(env["isParcel"])
+create_public_files(appName)
+create_server_files(appName, env)
+create_frontend_files(appName, env)
+create_package_json(appName, env)
+create_tools(appName, env)
