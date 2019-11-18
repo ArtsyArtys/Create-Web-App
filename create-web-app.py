@@ -40,7 +40,7 @@ question = [
         'message': 'Select Runtime Environment: ',
         'name': 'runtime',
         'choices': [
-            { 'name': 'User FSA Stack', 'checked': True },
+            # { 'name': 'User FSA Stack', 'checked': True },
             { 'name': 'Node' },
             { 'name': 'Python', 'disabled': True },
             { 'name': 'Elixir', 'disabled': True },
@@ -91,7 +91,8 @@ env['server'] = server
 if server == 'Express':
     dependencies.append(r'"express": "^4.16.4",' + "\n")
     devDependencies.append(r'"morgan": "^1.9.1",' + "\n")
-
+# elif server == 'Fastify':
+#     devDependencies.append(r'"fastify": "^"')
 
 frontendQuestion = [
     {
@@ -209,6 +210,9 @@ else:
         '"parcel-bundler": "^1.12.4",' + "\n"
     ]
     devDependencies.extend(myDevDependencies)
+
+if 'Sequelize' in tools:
+
 
 dependencies[-1] = dependencies[-1][0:-2]
 devDependencies[-1] = devDependencies[-1][0:-2]

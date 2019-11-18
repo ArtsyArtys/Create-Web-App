@@ -1,0 +1,14 @@
+{
+  "name": "initialboiler",
+  "version": "1.0.0",
+  "description": "_Good things come in pairs_",
+  "main": "webpack.config.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "npm run build-watch -- npm run start-server",
+    "start-server": "nodemon server",
+    "build-watch": "webpack -w"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
