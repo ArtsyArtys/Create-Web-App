@@ -3,6 +3,7 @@ const Router = require('koa-router')
 const logger = require('koa-logger')
 const app = new Koa()
 const router = new Router()
+const PORT = process.env.PORT || 1234
 
 app.use(logger())
 
@@ -37,4 +38,4 @@ function requestBodyJson(req) {
 // })
 
 app.use(router.routes())
-app.listen(3000)
+app.listen(PORT)

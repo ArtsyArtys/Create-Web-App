@@ -33,7 +33,6 @@ def create_folders(env):
         create_public_files(appName)
 
 
-print(appName)
 question = [
     {
         'type': 'list',
@@ -74,9 +73,6 @@ elif runtime == 'Python':
 
 backendChoices.append({'name': 'None'})
 
-print(backendChoices)
-
-
 serverQuestion = [
     {
         'type': 'list',
@@ -91,8 +87,8 @@ env['server'] = server
 if server == 'Express':
     dependencies.append(r'"express": "^4.16.4",' + "\n")
     devDependencies.append(r'"morgan": "^1.9.1",' + "\n")
-# elif server == 'Fastify':
-#     devDependencies.append(r'"fastify": "^"')
+elif server == 'Fastify':
+    devDependencies.append(r'"fastify": "^2.10.0"')
 
 frontendQuestion = [
     {
@@ -132,18 +128,19 @@ databaseQuestion = [
         'choices': [
             { 'name': 'MySQL' },
             { 'name': 'PostgreSQL' },
-            { 'name': 'Oracle' },
-            { 'name': 'MS SQL' },
-            { 'name': 'MongoDB' },
-            { 'name': 'DB2' },
-            { 'name': 'Neo4J' },
-            { 'name': 'DataStax Enterprise Graph' },
+            { 'name': 'Oracle', 'disabled': True },
+            { 'name': 'MS SQL', 'disabled': True },
+            { 'name': 'MongoDB', 'disabled': True },
+            { 'name': 'DB2', 'disabled': True },
+            { 'name': 'Neo4J', 'disabled': True },
+            { 'name': 'DataStax Enterprise Graph', 'disabled': True },
             { 'name': 'None'}
         ]
     }
 ]
 
 database = prompt(databaseQuestion, style=style)['database']
+env['database'] = database
 if database == 'PostgreSQL':
     myDependencies = [
         '"pg": "^7.9.0",' + "\n"
@@ -155,8 +152,9 @@ if database == 'PostgreSQL':
     dbuser = input("Input database owner username: ")
     dbpass = input("Input database owner password (hit enter if null): ")
     connectdb(database, dbname, dbuser, dbpass)
+    env['dbname'] = dbname
 
-tolsQuestion = [
+toolsQuestion = [
     {
         'type': 'checkbox',
         'message': r'Select Tools and Libraries (note parcel will be used if no bundler is picked)',
@@ -167,8 +165,8 @@ tolsQuestion = [
             { 'name': 'Sequelize' },
             { 'name': 'TypeOrm'},
             { 'name': 'Websocket -io'},
-            { 'name': 'Webpack', 'checked': True },
-            { 'name': 'Parcel'}, # default
+            { 'name': 'Webpack' },
+            { 'name': 'Parcel', 'checked': True }, # default
             { 'name': 'SQLAcademy' },
             { 'name': 'Doctrine 2' },
             { 'name': 'Google Oauth'},
@@ -176,10 +174,16 @@ tolsQuestion = [
     },
 ]
 
-tools = prompt(tolsQuestion, style=style)['tools']
+tools = prompt(toolsQuestion, style=style)['tools']
 env['tools'] = tools
 isParcel = False if 'Webpack' in tools else True
-# print(tools)
+if 'Redux' in tools:
+    dependencies.append('"redux": "^4.0.4",' + "\n")
+    dependencies.append('"axios": "^0.19.0",' + "\n")
+    dependencies.append('"redux-devtools-extension": "^2.13.8",' + "\n")
+    dependencies.append('"redux-thunk": "^2.3.0",' + "\n")
+if 'React-Redux' in tools:
+    dependencies.append('"react-redux": "^7.1.3",' + "\n")
 if 'Webpack' in tools:
     dependencies.append(r'"webpack": "^4.16.4",' + "\n")
     devDependencies.extend(['"@babel/core": "^7.4.3",' + "\n",
@@ -210,8 +214,9 @@ else:
         '"parcel-bundler": "^1.12.4",' + "\n"
     ]
     devDependencies.extend(myDevDependencies)
-
 if 'Sequelize' in tools:
+    dependencies.append(r'"crypto": "^1.0.1",' + "\n")
+    devDependencies.append(r'"sequelize": "^5.21.2",' + "\n")
 
 
 dependencies[-1] = dependencies[-1][0:-2]
@@ -219,9 +224,9 @@ devDependencies[-1] = devDependencies[-1][0:-2]
 env["dependencies"] = dependencies
 env["devDependencies"] = devDependencies
 env["isParcel"] = isParcel
-print(env["isParcel"])
 create_public_files(appName)
 create_server_files(appName, env)
 create_frontend_files(appName, env)
 create_package_json(appName, env)
 create_tools(appName, env)
+print(appName + r' has been created. Change directories to ' + appName + r' and run npm install to get started!')

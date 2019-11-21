@@ -20,7 +20,7 @@ const createApp = () => {
   app.use(compression())
 
   // static file-serving middleware
-  app.use(express.static(path.join(__dirname, '..', 'dist')))
+  app.use(express.static(path.join(__dirname, '..', 'public')))
 
   // any remaining requests with an extension (.js, .css, etc.) send 404
   app.use((req, res, next) => {
@@ -35,7 +35,7 @@ const createApp = () => {
 
   // sends index.html
   app.use('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'dist/index.html'))
+    res.sendFile(path.join(__dirname, '..', 'public/index.html'))
   })
 
   // error handling endware
