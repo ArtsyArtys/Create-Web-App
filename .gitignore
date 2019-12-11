@@ -4,7 +4,7 @@ test*
 *
 !psycopg2-2.8.4/*
 !PyInquirer-1.0.3/*
-!initialBoiler/*
+!initialBoiler/**
 !README.md
 !connectdb.py
 !create-web-app.py
