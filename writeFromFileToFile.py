@@ -159,11 +159,11 @@ const db = new Sequelize(
 module.exports = db
 """)
                 f.close()
-        if 'Redux' in env['tools']:
-            try:
-                makedirs(appName + 'client/store')
-            except FileExistsError:
-                print('The app name you picked already exists as a directory. Exiting installation')
-                exit()
-            copy(r'initialBoiler/client/store/index.js', appName + r'client/store/index.js')
-            copy(r'initialBoiler/client/store/user.js', appName + r'client/store/user.js')
+    if 'Redux' in env['tools']:
+        try:
+            makedirs(appName + 'client/store')
+        except FileExistsError:
+            print('The app name you picked already exists as a directory. Exiting installation')
+            exit()
+        copy(r'initialBoiler/client/store/index.js', appName + r'client/store/index.js')
+        copy(r'initialBoiler/client/store/user.js', appName + r'client/store/user.js')

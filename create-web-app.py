@@ -176,6 +176,7 @@ toolsQuestion = [
 
 tools = prompt(toolsQuestion, style=style)['tools']
 env['tools'] = tools
+print(tools)
 isParcel = False if 'Webpack' in tools else True
 if 'Redux' in tools:
     dependencies.append('"redux": "^4.0.4",' + "\n")
