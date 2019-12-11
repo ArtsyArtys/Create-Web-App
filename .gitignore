@@ -2,10 +2,10 @@ __pycache__
 temp
 test*
 **
-!psycopg2-2.8.4/*
-!PyInquirer-1.0.3/*
-!initialBoiler/**
-!README.md
-!connectdb.py
-!create-web-app.py
-!writeFromFileToFile.py
+!/psycopg2-2.08.4/*
+!/PyInquirer-1.0.3/*
+!/initialBoiler/**
+!/README.md
+!/connectdb.py
+!/create-web-app.py
+!/writeFromFileToFile.py
