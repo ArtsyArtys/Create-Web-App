@@ -82,17 +82,19 @@ def create_frontend_files(appName, env):
             f.close()
         with open(r"initialBoiler/client/" + frontend + r"App.js", "r") as f:
             clientApp = f.read()
-            with open(appName + r"client/app.js", "w+") as f1:
+            with open(appName + r"client/App.js", "w+") as f1:
                 f1.write(clientApp)
                 f1.close()
             f.close()
-        if 'React-Redux' not in env['tools'] and frontend == "react":
+        if 'React-Redux' not in env['tools'] and frontend == "react" and env['isParcel'] != False:
             copy(r"initialBoiler/client/history.js", appName + r"client/history.js")
             copy(r"initialBoiler/public/reactIndex.js", appName + r'public/index.js')
-        elif 'React-Redux' in env['tools']:
+        elif 'React-Redux' in env['tools'] and env['isParcel'] != False:
             copy(r"initialBoiler/client/history.js", appName + r"client/history.js")
             copy(r"initialBoiler/client/reactReduxIndex.js", appName + r'public/index.js')
-
+        elif 'React-Redux' in env['tools'] and env['tools'].contains('Webpack'):
+            copy(r"initialBoiler/client/history.js", appName + r"client/history.js")
+            copy(r"initialBoiler/client/webpackReactReduxIndex.js", appName + r'public/index.js')
 
 def create_package_json(appName, env):
     packageName = "parcelPackage.json" if env["isParcel"] == True else "webpackPackage.json"

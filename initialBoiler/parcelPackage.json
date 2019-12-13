@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "parcel public/index.html & nodemon server",
+    "start": "parcel watch public/index.html & nodemon server",
     "start-server": "nodemon server",
     "build-watch": "parcel watch ./public/index.html"
   },
