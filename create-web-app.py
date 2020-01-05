@@ -1,5 +1,5 @@
 from __future__ import print_function, unicode_literals
-from writeFromFileToFile import create_public_files, create_server_files, create_frontend_files, create_package_json, create_tools
+from writeFromFileToFile import create_public_files, create_server_files, create_frontend_files, create_package_json, create_tools, insert_line
 from sys import exit
 from PyInquirer import style_from_dict, Token, prompt#, Separator
 from connectdb import connectdb

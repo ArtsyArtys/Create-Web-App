@@ -11,6 +11,22 @@ def file_prepender(filepath, lineInput):
         f.write(lineInput.rstrip('\r\n') + '\n' + content)
         f.close()
 
+def insert_line(filepath, stringToFind, newString):
+    actualLines = []
+    with open(filepath, 'r') as f:
+        lines = f.readlines()
+    f.close()
+    with open(filepath, 'w+') as f:
+        print(lines)
+        for line in lines:
+            actualLines.append(line)
+            if line.startswith(stringToFind):
+                actualLines.append(newString + '\n')
+        print(actualLines)
+        f.write("".join(actualLines))
+    f.close()
+    return
+
 def replaceLines(filepath, startsWith, substr, replacement, single=False):
     lines = []
     with open(filepath, "r") as f:
