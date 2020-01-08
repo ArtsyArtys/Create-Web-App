@@ -3,7 +3,6 @@ from os import makedirs, path
 from shutil import copy
 import fileinput
 
-# Used for prepending lines, check out f.seek and rstrip for line interpolation
 def file_prepender(filepath, lineInput):
     with open(filepath, 'r+') as f:
         content = f.read()
@@ -11,6 +10,7 @@ def file_prepender(filepath, lineInput):
         f.write(lineInput.rstrip('\r\n') + '\n' + content)
         f.close()
 
+# inserts newString to file one line after stringToFind
 def insert_line(filepath, stringToFind, newString):
     actualLines = []
     with open(filepath, 'r') as f:
@@ -22,27 +22,22 @@ def insert_line(filepath, stringToFind, newString):
             actualLines.append(line)
             if line.startswith(stringToFind):
                 actualLines.append(newString + '\n')
-        print(actualLines)
         f.write("".join(actualLines))
     f.close()
     return
 
-def replaceLines(filepath, startsWith, substr, replacement, single=False):
-    lines = []
+def replace_line(filepath, stringToFind, substr, replacement):
+    actualLines = []
     with open(filepath, "r") as f:
         lines = f.readlines()
-        f.close()
+    f.close()
     with open(filepath, "w+") as f:
         for line in lines:
-            if line.startswith(startsWith):
+            if line.startswith(stringToFind):
                 line = line.replace(substr, replacement)
-                if single == False:
-                    print('found the line')
-                    f.write(''.join(lines))
-                    f.close()
-                    return
-        f.write(''.join(lines))
-        f.close()
+            actualLines.append(line)
+        f.write("".join(actualLines))
+    f.close()
     return
 
 
@@ -53,7 +48,7 @@ def create_public_files(appName):
     with open(appName + r'README.md', "w+") as f:
         f.write("""# Create Web App
         This app was initialized with Create Web App, the purpose of which is to remove the strain of creating all the boilerplate
-        for a new web project. Simply pick what initial setup you have, install any additional tools
+        for a new web project and standardize the filesystem architecture. Simply pick what initial setup you have, install any additional tools
         you would like to use, and start coding, like this person did!""")
 
     copy(r'initialBoiler/public/style.css', appName + r'public/style.css')
@@ -64,8 +59,8 @@ def create_public_files(appName):
 
 def create_server_files(appName, env):
     server = env["server"].lower()
-    if env['isParcel'] == False:
-        server = server + 'Webpack'
+    # if env['isParcel'] == False:
+    #     server = server + 'Webpack'
     with open(r"initialBoiler/server/" + server + r".js", "r") as f:
         serverIndex = f.read()
         try:
@@ -108,7 +103,7 @@ def create_frontend_files(appName, env):
         elif 'React-Redux' in env['tools'] and env['isParcel'] != False:
             copy(r"initialBoiler/client/history.js", appName + r"client/history.js")
             copy(r"initialBoiler/client/reactReduxIndex.js", appName + r'public/index.js')
-        elif 'React-Redux' in env['tools'] and env['tools'].contains('Webpack'):
+        elif 'React-Redux' in env['tools'] and 'Webpack' in env['tools']:
             copy(r"initialBoiler/client/history.js", appName + r"client/history.js")
             copy(r"initialBoiler/client/webpackReactReduxIndex.js", appName + r'public/index.js')
 
@@ -145,13 +140,13 @@ def create_tools(appName, env):
     serverFile = appName + r'server/index.js'
     if env["isParcel"] == False:
         # print('Should replace lines')
-        replaceLines(
+        replace_line(
             serverFile,
             r'  app.use(express.static(path.join',
             'dist',
             r"public"
         )
-        replaceLines(
+        replace_line(
             serverFile,
             r"    res.sendFile(path.join(__dirname, '..', 'dist/index.html'))",
             'dist',

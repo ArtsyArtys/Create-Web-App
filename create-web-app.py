@@ -20,6 +20,7 @@ env = {}
 dependencies = []
 devDependencies = []
 appName = input('Input the name of your app: ') + r'/'
+print(appName[:-1])
 
 def create_folders(env):
     if env['frontend'] != 'None' and env['server'] != 'None':
@@ -36,7 +37,7 @@ def create_folders(env):
 question = [
     {
         'type': 'list',
-        'message': 'Select Runtime Environment: ',
+        'message': 'Select Server/Runtime Environment: ',
         'name': 'runtime',
         'choices': [
             # { 'name': 'User FSA Stack', 'checked': True },
@@ -54,6 +55,7 @@ question = [
 
 runtime = prompt(question, style=style)['runtime']
 env['runtime'] = runtime
+print(runtime)
 
 if runtime == 'User FSA Stack':
     env = {'frontend': 'React', 'server': 'Express'}
@@ -84,7 +86,10 @@ serverQuestion = [
 
 server = prompt(serverQuestion, style=style)['server']
 env['server'] = server
+print(server)
+
 if server == 'Express':
+    dependencies.append(r'"dotenv": "^8.2.0",' + "\n")
     dependencies.append(r'"express": "^4.16.4",' + "\n")
     devDependencies.append(r'"morgan": "^1.9.1",' + "\n")
 elif server == 'Fastify':
@@ -110,6 +115,7 @@ frontendQuestion = [
 
 frontend = prompt(frontendQuestion, style=style)['frontend']
 env['frontend'] = frontend
+print(frontend)
 
 if frontend == 'React':
     theseDependencies = [
@@ -141,6 +147,8 @@ databaseQuestion = [
 
 database = prompt(databaseQuestion, style=style)['database']
 env['database'] = database
+print(database)
+
 if database == 'PostgreSQL':
     myDependencies = [
         '"pg": "^7.9.0",' + "\n"
@@ -177,6 +185,7 @@ toolsQuestion = [
 tools = prompt(toolsQuestion, style=style)['tools']
 env['tools'] = tools
 print(tools)
+
 isParcel = False if 'Webpack' in tools else True
 if 'Redux' in tools:
     dependencies.append('"redux": "^4.0.4",' + "\n")
