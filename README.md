@@ -35,4 +35,4 @@ Ensure you have python installed on your device, you can check in the shell/cmd 
 
 
 
-  The current version of Create Web App is version 1.0.2 and has been tested extensively with the NERD stack. Updates will be posted regularly. Issues, complaints, and design decisions are welcome to be discussed via email at Randy@ArtsyArtys.com.
+  The current version of Create Web App is version 1.0.3 and has been tested extensively with the NERD stack. Updates will be posted regularly. Issues, complaints, and design decisions are welcome to be discussed via email at Randy@ArtsyArtys.com.
