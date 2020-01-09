@@ -2,7 +2,7 @@ __pycache__
 temp
 test*
 **
-!/psycopg2-2.08.4/*
+!/psycopg2-2.8.4/*
 !/PyInquirer-1.0.3/*
 !/initialBoiler/**
 !/README.md
