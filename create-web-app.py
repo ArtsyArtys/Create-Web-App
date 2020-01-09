@@ -195,7 +195,7 @@ if 'Redux' in tools:
 if 'React-Redux' in tools:
     dependencies.append('"react-redux": "^7.1.3",' + "\n")
 if 'Webpack' in tools:
-    dependencies.append(r'"webpack": "^4.16.4",' + "\n")
+    # dependencies.append(r'"webpack": "^4.16.4",' + "\n") # needed for production?
     devDependencies.extend(['"@babel/core": "^7.4.3",' + "\n",
         '"@babel/plugin-proposal-class-properties": "7.4.0",' + "\n",
         '"@babel/plugin-proposal-decorators": "7.4.0",' + "\n",
@@ -225,7 +225,6 @@ else:
     ]
     devDependencies.extend(myDevDependencies)
 if 'Sequelize' in tools:
-    dependencies.append(r'"crypto": "^1.0.1",' + "\n")
     devDependencies.append(r'"sequelize": "^5.21.2",' + "\n")
 
 

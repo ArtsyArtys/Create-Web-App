@@ -59,8 +59,6 @@ def create_public_files(appName):
 
 def create_server_files(appName, env):
     server = env["server"].lower()
-    # if env['isParcel'] == False:
-    #     server = server + 'Webpack'
     with open(r"initialBoiler/server/" + server + r".js", "r") as f:
         serverIndex = f.read()
         try:
@@ -108,7 +106,8 @@ def create_frontend_files(appName, env):
             copy(r"initialBoiler/client/webpackReactReduxIndex.js", appName + r'public/index.js')
 
 def create_package_json(appName, env):
-    packageName = "parcelPackage.json" if env["isParcel"] == True else "webpackPackage.json"
+    packagePath = appName + r"package.json"
+    copy(r"initialBoiler/package.json", packagePath)
     if env["isParcel"] == True:
         with open(appName + r".babelrc", "a+") as f:
             babels = []
@@ -121,13 +120,29 @@ def create_package_json(appName, env):
                 f.write(str)
             f.write(r']' + "\n" + r'}' + "\n")
             f.close()
-
-    else:
+    elif 'Webpack' in env['tools']:
         copy(r"initialBoiler/webpack.config.js", appName + r"webpack.config.js")
         copy(r"initialBoiler/.babelrc", appName + r".babelrc")
+        replace_line(
+        packagePath,
+        r'    "start"',
+        r"parcel watch public/index.html & nodemon server",
+        r"npm run build-watch -- npm run start-server"
+        )
+        replace_line(
+        packagePath,
+        r'    "build-watch"',
+        r"parcel watch ./public/index.html",
+        r"webpack -w"
+        )
+        replace_line(
+        packagePath,
+        r'  "main"',
+        r"index.js",
+        r"webpack.config.js"
+        )
 
-    copy(r"initialBoiler/" + packageName, appName + r"package.json")
-    with open(appName + r"package.json", "a") as f:
+    with open(packagePath, "a") as f:
         for i in env["dependencies"]:
             f.write("    " + i)
         f.write("\n" + r"  }," + "\n" + r'  "devDependencies": {' + "\n")
@@ -139,17 +154,16 @@ def create_package_json(appName, env):
 def create_tools(appName, env):
     serverFile = appName + r'server/index.js'
     if env["isParcel"] == False:
-        # print('Should replace lines')
         replace_line(
             serverFile,
             r'  app.use(express.static(path.join',
-            'dist',
+            r'dist',
             r"public"
         )
         replace_line(
             serverFile,
             r"    res.sendFile(path.join(__dirname, '..', 'dist/index.html'))",
-            'dist',
+            r'dist',
             r"public"
         )
     if 'Sequelize' in env['tools']:
