@@ -191,6 +191,7 @@ if 'Redux' in tools:
     dependencies.append('"redux": "^4.0.4",' + "\n")
     dependencies.append('"axios": "^0.19.0",' + "\n")
     dependencies.append('"redux-devtools-extension": "^2.13.8",' + "\n")
+    dependencies.append('"redux-logger": "^3.0.6",' + "\n")
     dependencies.append('"redux-thunk": "^2.3.0",' + "\n")
 if 'React-Redux' in tools:
     dependencies.append('"react-redux": "^7.1.3",' + "\n")

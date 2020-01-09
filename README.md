@@ -13,12 +13,12 @@ Ensure you have python installed on your device, you can check in the shell/cmd 
 
 ### Next Steps
   Current bugs and incomplete parts being worked on:
-  - [ ] MySQL database not being created properly
   - [ ] Websocket.io not functioning
+  - [ ] Google Oauth not functioning
   - [ ] TypeOrm not functioning
   - [ ] SQLAcademy not functioning
   - [ ] Doctrine2 not functioning
-  - [ ] Google Oauth not functioning
+  - [ ] MySQL database not being created properly
 
   Additions to be made:
   - [ ] Facebook Oauth
@@ -35,4 +35,4 @@ Ensure you have python installed on your device, you can check in the shell/cmd 
 
 
 
-  The current version of Create Web App is version 1.0.3 and has been tested extensively with the NERD stack. Updates will be posted regularly. Issues, complaints, and design decisions are welcome to be discussed via email at Randy@ArtsyArtys.com.
+  The current version of Create Web App is version 1.0.4 and has been tested extensively with the NERD stack. Updates will be posted regularly. Issues, complaints, and design decisions are welcome to be discussed via email at Randy@ArtsyArtys.com.

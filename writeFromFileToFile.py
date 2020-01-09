@@ -17,7 +17,6 @@ def insert_line(filepath, stringToFind, newString):
         lines = f.readlines()
     f.close()
     with open(filepath, 'w+') as f:
-        print(lines)
         for line in lines:
             actualLines.append(line)
             if line.startswith(stringToFind):
@@ -26,7 +25,7 @@ def insert_line(filepath, stringToFind, newString):
     f.close()
     return
 
-def replace_line(filepath, stringToFind, substr, replacement):
+def replace_line_substring(filepath, stringToFind, substr, replacement):
     actualLines = []
     with open(filepath, "r") as f:
         lines = f.readlines()
@@ -40,10 +39,31 @@ def replace_line(filepath, stringToFind, substr, replacement):
     f.close()
     return
 
+def pad_line(filepath, stringToFind, pad = "  ", numOfLines = 1):
+    actualLines = []
+    startPadding = False
+    with open(filepath, 'r') as f:
+        lines = f.readlines()
+    f.close()
+    with open(filepath, "w+") as f:
+        for line in lines:
+            if line.startswith(stringToFind):
+                startPadding = True
+            if startPadding == True:
+                line = pad + line
+                numOfLines -= 1
+                if numOfLines <= 0:
+                    startPadding = False
+            actualLines.append(line)
+        f.write("".join(actualLines))
+    f.close()
+    return
+
 
 def create_public_files(appName):
-    if not path.exists(appName + r"public"):
-        makedirs(appName + r"public")
+    publicPath = appName + r'public/'
+    if not path.exists(publicPath):
+        makedirs(publicPath)
 
     with open(appName + r'README.md', "w+") as f:
         f.write("""# Create Web App
@@ -51,10 +71,10 @@ def create_public_files(appName):
         for a new web project and standardize the filesystem architecture. Simply pick what initial setup you have, install any additional tools
         you would like to use, and start coding, like this person did!""")
 
-    copy(r'initialBoiler/public/style.css', appName + r'public/style.css')
-    copy(r'initialBoiler/public/index.html', appName + r'public/index.html')
-    copy(r'initialBoiler/public/favicon.ico', appName + r'public/favicon.ico')
-    copy(r'initialBoiler/public/apple-touch-icon.png', appName + r'public/apple-touch-icon.png')
+    copy(r'initialBoiler/public/style.css', publicPath + r'style.css')
+    copy(r'initialBoiler/public/index.html', publicPath + r'index.html')
+    copy(r'initialBoiler/public/favicon.ico', publicPath + r'favicon.ico')
+    copy(r'initialBoiler/public/apple-touch-icon.png', publicPath + r'apple-touch-icon.png')
 
 
 def create_server_files(appName, env):
@@ -87,23 +107,65 @@ def create_frontend_files(appName, env):
                 exit()
             with open(appName + r"client/index.js", "w+") as f1:
                 f1.write(clientIndex)
-                f1.close()
-            f.close()
+            f1.close()
+        f.close()
         with open(r"initialBoiler/client/" + frontend + r"App.js", "r") as f:
             clientApp = f.read()
             with open(appName + r"client/App.js", "w+") as f1:
                 f1.write(clientApp)
-                f1.close()
-            f.close()
-        if 'React-Redux' not in env['tools'] and frontend == "react" and env['isParcel'] != False:
+            f1.close()
+        f.close()
+        if frontend == "react":
             copy(r"initialBoiler/client/history.js", appName + r"client/history.js")
             copy(r"initialBoiler/public/reactIndex.js", appName + r'public/index.js')
-        elif 'React-Redux' in env['tools'] and env['isParcel'] != False:
-            copy(r"initialBoiler/client/history.js", appName + r"client/history.js")
-            copy(r"initialBoiler/client/reactReduxIndex.js", appName + r'public/index.js')
-        elif 'React-Redux' in env['tools'] and 'Webpack' in env['tools']:
-            copy(r"initialBoiler/client/history.js", appName + r"client/history.js")
-            copy(r"initialBoiler/client/webpackReactReduxIndex.js", appName + r'public/index.js')
+            copy(r"initialBoiler/client/reactIndex.js", appName + r'client/index.js')
+            if 'React-Redux' in env['tools']:
+                insert_line(
+                appName + r"client/index.js",
+                r"import ReactDOM",
+                r"import store from '../client/store'"
+                )
+                insert_line(
+                    appName + r"client/index.js",
+                    r"import ReactDOM",
+                    r"import {Provider} from 'react-redux'"
+                )
+                pad_line(
+                    appName + r"client/index.js",
+                    r"  <Router",
+                    "  ",
+                    3
+                )
+                insert_line(
+                    appName + r"client/index.js",
+                    r"export default",
+                    r"  <Provider store={store}>"
+                )
+                insert_line(
+                    appName + r"client/index.js",
+                    r"    </Router",
+                    r"  </Provider>,"
+                )
+                insert_line(
+                    appName + r"public/index.js",
+                    r"    </Router",
+                    r"  </Provider>,"
+                )
+                replace_line_substring(
+                    appName + r"client/index.js",
+                    r"    </Router",
+                    ",",
+                    ""
+                )
+                # copy(r"initialBoiler/client/reactReduxIndex.js", appName + r'public/index.js')
+            if 'Webpack' in env['tools']:
+                # this will replace each import statement for webpack filestructure
+                replace_line_substring(
+                    appName + r'client/index.js',
+                    "import",
+                    r"../client",
+                    r"."
+                )
 
 def create_package_json(appName, env):
     packagePath = appName + r"package.json"
@@ -123,23 +185,23 @@ def create_package_json(appName, env):
     elif 'Webpack' in env['tools']:
         copy(r"initialBoiler/webpack.config.js", appName + r"webpack.config.js")
         copy(r"initialBoiler/.babelrc", appName + r".babelrc")
-        replace_line(
-        packagePath,
-        r'    "start"',
-        r"parcel watch public/index.html & nodemon server",
-        r"npm run build-watch -- npm run start-server"
+        replace_line_substring(
+            packagePath,
+            r'    "start"',
+            r"parcel watch public/index.html & nodemon server",
+            r"npm run build-watch -- npm run start-server"
         )
-        replace_line(
-        packagePath,
-        r'    "build-watch"',
-        r"parcel watch ./public/index.html",
-        r"webpack -w"
+        replace_line_substring(
+            packagePath,
+            r'    "build-watch"',
+            r"parcel watch ./public/index.html",
+            r"webpack -w"
         )
-        replace_line(
-        packagePath,
-        r'  "main"',
-        r"index.js",
-        r"webpack.config.js"
+        replace_line_substring(
+            packagePath,
+            r'  "main"',
+            r"index.js",
+            r"webpack.config.js"
         )
 
     with open(packagePath, "a") as f:
@@ -154,13 +216,13 @@ def create_package_json(appName, env):
 def create_tools(appName, env):
     serverFile = appName + r'server/index.js'
     if env["isParcel"] == False:
-        replace_line(
+        replace_line_substring(
             serverFile,
             r'  app.use(express.static(path.join',
             r'dist',
             r"public"
         )
-        replace_line(
+        replace_line_substring(
             serverFile,
             r"    res.sendFile(path.join(__dirname, '..', 'dist/index.html'))",
             r'dist',
