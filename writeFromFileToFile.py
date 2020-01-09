@@ -116,6 +116,8 @@ def create_frontend_files(appName, env):
             f1.close()
         f.close()
         if frontend == "react":
+            makedirs(appName + r"components")
+            copy(r"initialBoiler/client/components/index.js", appName + r"client/components/index.js")
             copy(r"initialBoiler/client/history.js", appName + r"client/history.js")
             copy(r"initialBoiler/public/reactIndex.js", appName + r'public/index.js')
             copy(r"initialBoiler/client/reactIndex.js", appName + r'client/index.js')

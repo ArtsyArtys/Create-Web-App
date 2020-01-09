@@ -13,6 +13,7 @@ Ensure you have python installed on your device, you can check in the shell/cmd 
 
 ### Next Steps
   Current bugs and incomplete parts being worked on:
+  - [ ] Database connection not automatic without using Sequelize
   - [ ] Websocket.io not functioning
   - [ ] Google Oauth not functioning
   - [ ] TypeOrm not functioning
@@ -21,6 +22,7 @@ Ensure you have python installed on your device, you can check in the shell/cmd 
   - [ ] MySQL database not being created properly
 
   Additions to be made:
+  - [ ] dotenv inclusion for node projects
   - [ ] Facebook Oauth
   - [ ] Production and Test environments specified during app creation.
   - [ ] Controller directory to be made in all Node.js projects for callbacks
@@ -31,8 +33,8 @@ Ensure you have python installed on your device, you can check in the shell/cmd 
   - [ ] Vue base setup to be made
   - [ ] Ruby on Rails to be added to Runtime Environment options
 
-  Current focus is on refactoring file creation to rely less on installation folders so the project can scale arbitrarily without a large installation cost and so contributors can more easily make Pull Requests that are suitable for additions to the project. Then the project will be converted to .exe format for simplified installation across all operating systems. Then current bugs and incomplete parts will be attended and additions will then be made.
+  Current focus is on fixing database connections and converting to .exe format for simplified installation across all operating systems. Then current bugs and incomplete parts will be attended and additions will then be made.
 
 
 
-  The current version of Create Web App is version 1.0.4 and has been tested extensively with the NERD stack. Updates will be posted regularly. Issues, complaints, and design decisions are welcome to be discussed via email at Randy@ArtsyArtys.com.
+  The current version of Create Web App is version 1.0.5 and has been tested extensively with the NERD stack. Updates will be posted regularly. Issues, complaints, and design decisions are welcome to be discussed via email at Randy@ArtsyArtys.com.
