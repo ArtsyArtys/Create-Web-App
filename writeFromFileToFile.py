@@ -4,11 +4,17 @@ from shutil import copy
 import fileinput
 
 def file_prepender(filepath, lineInput):
-    with open(filepath, 'r+') as f:
-        content = f.read()
-        f.seek(0, 0)
-        f.write(lineInput.rstrip('\r\n') + '\n' + content)
-        f.close()
+    actualLines = [lineInput.rstrip('\r\n') + '\n']
+    with open(filepath, 'r') as f:
+        lines = f.readlines()
+    f.close()
+    for line in lines:
+        actualLines.append(line)
+    print("".join(actualLines))
+    with open(filepath, 'w+') as f:
+        f.write("".join(actualLines))
+    f.close()
+    return
 
 # inserts newString to file one line after stringToFind
 def insert_line(filepath, stringToFind, newString):
@@ -97,6 +103,7 @@ def create_server_files(appName, env):
 
 def create_frontend_files(appName, env):
     frontend = env["frontend"].lower()
+    print(env)
     if frontend != 'none':
         with open(r"initialBoiler/client/" + frontend + r"Index.js", "r") as f:
             clientIndex = f.read()
@@ -116,7 +123,7 @@ def create_frontend_files(appName, env):
             f1.close()
         f.close()
         if frontend == "react":
-            makedirs(appName + r"components")
+            makedirs(appName + r"client/components")
             copy(r"initialBoiler/client/components/index.js", appName + r"client/components/index.js")
             copy(r"initialBoiler/client/history.js", appName + r"client/history.js")
             copy(r"initialBoiler/public/reactIndex.js", appName + r'public/index.js')
@@ -168,6 +175,8 @@ def create_frontend_files(appName, env):
                     r"../client",
                     r"."
                 )
+        if env["isParcel"] == True:
+            file_prepender(appName + r"client/index.js", r"import '@babel/polyfill'")
 
 def create_package_json(appName, env):
     packagePath = appName + r"package.json"

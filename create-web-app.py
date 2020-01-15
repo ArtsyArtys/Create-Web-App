@@ -20,7 +20,7 @@ env = {}
 dependencies = []
 devDependencies = []
 appName = input('Input the name of your app: ') + r'/'
-print(appName[:-1])
+# print(appName[:-1])
 
 def create_folders(env):
     if env['frontend'] != 'None' and env['server'] != 'None':
@@ -55,7 +55,7 @@ question = [
 
 runtime = prompt(question, style=style)['runtime']
 env['runtime'] = runtime
-print(runtime)
+# print(runtime)
 
 if runtime == 'User FSA Stack':
     env = {'frontend': 'React', 'server': 'Express'}
@@ -86,7 +86,7 @@ serverQuestion = [
 
 server = prompt(serverQuestion, style=style)['server']
 env['server'] = server
-print(server)
+# print(server)
 
 if server == 'Express':
     dependencies.append(r'"dotenv": "^8.2.0",' + "\n")
@@ -115,7 +115,7 @@ frontendQuestion = [
 
 frontend = prompt(frontendQuestion, style=style)['frontend']
 env['frontend'] = frontend
-print(frontend)
+# print(frontend)
 
 if frontend == 'React':
     theseDependencies = [
@@ -147,7 +147,7 @@ databaseQuestion = [
 
 database = prompt(databaseQuestion, style=style)['database']
 env['database'] = database
-print(database)
+# print(database)
 
 if database == 'PostgreSQL':
     myDependencies = [
@@ -184,7 +184,7 @@ toolsQuestion = [
 
 tools = prompt(toolsQuestion, style=style)['tools']
 env['tools'] = tools
-print(tools)
+# print(tools)
 
 isParcel = False if 'Webpack' in tools else True
 if 'Redux' in tools:
@@ -219,6 +219,7 @@ if 'Webpack' in tools:
 else:
     dependencies.append(r'"parcelmon": "0.0.9",' + "\n")
     myDevDependencies = [
+        '"@babel/polyfill": "^7.4.3",' + "\n",
         '"babel-core": "^6.26.3",' + "\n",
         '"babel-preset-env": "^1.7.0",' + "\n",
         '"babel-preset-react": "^6.24.1",' + "\n",
